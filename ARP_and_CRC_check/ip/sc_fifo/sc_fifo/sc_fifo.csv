@@ -1,0 +1,18 @@
+# system info sc_fifo on 2023.12.15.23:10:23
+system_info:
+name,value
+DEVICE,EP4CE115F29C7
+DEVICE_FAMILY,Cyclone IV E
+GENERATION_ID,1702678222
+#
+#
+# Files generated for sc_fifo on 2023.12.15.23:10:23
+files:
+filepath,kind,attributes,module,is_top
+simulation/sc_fifo.v,VERILOG,,sc_fifo,true
+simulation/submodules/altera_avalon_sc_fifo.v,VERILOG,,altera_avalon_sc_fifo,false
+#
+# Map from instance-path to kind of module
+instances:
+instancePath,module
+sc_fifo.sc_fifo_0,altera_avalon_sc_fifo

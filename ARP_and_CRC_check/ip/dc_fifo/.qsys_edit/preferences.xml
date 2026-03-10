@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<preferences>
+ <debug showDebugMenu="0" />
+ <systemtable filter="All Interfaces">
+  <columns>
+   <connections preferredWidth="31" />
+   <irq preferredWidth="34" />
+  </columns>
+ </systemtable>
+ <library
+   expandedCategories="Library,Library/Qsys Interconnect/Memory-Mapped Alpha,Project,Library/University Program,Library/Basic Functions,Library/Qsys Interconnect/Memory-Mapped,Library/University Program/Audio &amp; Video,Library/Basic Functions/On Chip Memory,Library/Qsys Interconnect,Project/System,Library/University Program/Audio &amp; Video/Video" />
+ <window width="1284" height="800" x="2460" y="141" />
+ <generation simulation="VERILOG" path="dc_fifo" />
+</preferences>
