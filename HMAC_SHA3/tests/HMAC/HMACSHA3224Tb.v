@@ -1,0 +1,183 @@
+module HMACSHA3224Tb;
+// The HMACSHA3224Tb module implements a testbench for verifying the HMACSHA3 module using the Questa simulator.
+// The HMACSHA3224Tb module generates control signals for the HMACSHA3 unit and verifies the correctness of the computed HMAC digests.
+
+reg [7:0] TEST = 8'b0;
+/////////////////////////////////////////
+
+parameter inClkp = 10;
+reg       regInClk  = 1'b0;
+
+always
+begin
+    #(inClkp/2) regInClk = !regInClk;
+end
+
+////////////////////////////////////////
+reg   regReset = 1'b0;
+
+reg          regInDataWr   = 1'b0;
+reg [1151:0] regInDataData = 1152'b0;
+reg          regInDataEnd  = 1'b0;
+
+reg          regInKeyWr    = 1'b0;
+reg [1151:0] regInKeyData  = 1152'b0;
+reg          regInKeyEnd   = 1'b0;
+
+wire [223:0] outDataData;
+wire         outHashEnable;
+wire         outBusy;
+
+HMACSHA3 #(.HASH_SIZE(224)) hmacSha3(
+    .inClk(regInClk),
+    .inRst(regReset),
+    .inDataData(regInDataData),
+    .inDataWr(regInDataWr),
+    .inDataEnd(regInDataEnd),
+    .inKeyData(regInKeyData),
+    .inKeyWr(regInKeyWr),
+    .inKeyEnd(regInKeyEnd),
+    .outHash(outDataData),
+	.outHashEnable(outHashEnable),
+    .outBusy(outBusy)
+);
+
+always
+begin
+   #(inClkp);
+    /////// empty key and empty message
+    regInKeyData = 1152'h0;
+    regInKeyWr = 1'b1; regInKeyEnd = 1'b1; #(inClkp);
+    regInKeyWr = 1'b0; regInKeyEnd = 1'b0; regInKeyData = 1152'b0;
+    
+    wait(outBusy == 1'b0 && regInClk == 1'b0);
+    
+    regInDataData = 1152'h800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000006;
+    regInDataWr = 1'b1; regInDataEnd = 1'b1; #(inClkp);
+    regInDataWr = 1'b0; regInDataEnd = 1'b0; regInDataData = 1152'b0;
+
+    wait(outHashEnable == 1'b1 && regInClk == 1'b0);
+    if(outDataData == 224'h8390a489d0350964f422e2c33a486cb2f100bc44f94ebbd5e044901b) begin
+        $display("TEST:%d OK HASH: %x", TEST, outDataData);
+    end else begin
+        $display("TEST:%d FAIL HASH: %x", TEST, outDataData);
+    end
+	
+    wait(outBusy == 1'b0 && regInClk == 1'b0);
+    ///// checking whether encryption with the same key will work
+    TEST = TEST + 1;
+    regInDataData = 1152'h800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000600;
+    regInDataWr = 1'b1; regInDataEnd = 1'b1; #(inClkp);
+    regInDataWr = 1'b0; regInDataEnd = 1'b0; regInDataData = 1152'b0;
+   
+    wait(outHashEnable == 1'b1 && regInClk == 1'b0);
+    if(outDataData == 224'h1dc122f62b664bb1514dc18e80a7baff2ffd2d9f636fc2dd10456f71) begin
+        $display("TEST:%d OK HASH: %x",TEST,outDataData);
+    end else begin
+        $display("TEST:%d FAIL HASH: %x",TEST, outDataData);
+    end
+    wait(outBusy == 1'b0 && regInClk == 1'b0);
+    //// checking whether encryption with the same key will work - version 2
+    TEST = TEST + 1;
+    regInDataData = 1152'h800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000062211;
+    regInDataWr = 1'b1; regInDataEnd = 1'b1; #(inClkp);
+    regInDataWr = 1'b0; regInDataEnd = 1'b0; regInDataData = 1152'b0;
+   
+    wait(outHashEnable == 1'b1 && regInClk == 1'b0);
+    if(outDataData == 224'h6b8923483177b81a775eb1fe4b57cf13f1e63f3be21f88d7ed43b44b) begin
+        $display("TEST:%d OK HASH: %x", TEST, outDataData);
+    end else begin
+        $display("TEST:%d FAIL HASH: %x", TEST, outDataData);
+    end
+    
+    regReset=1'b1;#(inClkp);
+    regReset=1'b0;#(inClkp);
+    TEST = TEST + 1;
+   
+    #(inClkp);
+    wait(outBusy == 1'b0 && regInClk == 1'b0);
+    ///////////////// Size of key and message are smaller than size of block in HMAC algorithm
+    regInKeyData = 1152'h000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001f1e1d1c1b1a191817161514131211100f0e0d0c0b0a09080706050403020100;
+    regInKeyWr = 1'b1; regInKeyEnd = 1'b1; #(inClkp);
+    regInKeyWr = 1'b0; regInKeyEnd = 1'b0; regInKeyData = 1152'b0;
+
+    wait(outBusy == 1'b0 && regInClk == 1'b0);
+    
+    
+    regInDataData = 1152'h800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000061f1e1d1c1b1a191817161514131211100f0e0d0c0b0a09080706050403020100;
+    regInDataWr = 1'b1; regInDataEnd = 1'b1; #(inClkp);
+    regInDataWr = 1'b0; regInDataEnd = 1'b0; regInDataData = 1152'b0;
+   
+    wait(outHashEnable == 1'b1 && regInClk == 1'b0);
+    if(outDataData == 224'hf46805feb3f0dfaa04ab084ec25269692456defe8e620acc73f0ebfe) begin
+        $display("TEST:%d OK HASH: %x", TEST, outDataData);
+    end else begin
+        $display("TEST:%d FAIL HASH: %x", TEST, outDataData);
+    end
+    
+    regReset=1'b1;#(inClkp);
+    regReset=1'b0;#(inClkp);
+    TEST = TEST + 1;
+    ///////////////// Size of key and message are equal to size of block in HMAC algorithm
+    regInKeyData = 1152'h8f8e8d8c8b8a898887868584838281807f7e7d7c7b7a797877767574737271706f6e6d6c6b6a696867666564636261605f5e5d5c5b5a595857565554535251504f4e4d4c4b4a494847464544434241403f3e3d3c3b3a393837363534333231302f2e2d2c2b2a292827262524232221201f1e1d1c1b1a191817161514131211100f0e0d0c0b0a09080706050403020100;
+    regInKeyWr = 1'b1; regInKeyEnd = 1'b1; #(inClkp);
+    regInKeyWr = 1'b0; regInKeyEnd = 1'b0; regInKeyData = 1152'b0;
+
+    wait(outBusy == 1'b0 && regInClk == 1'b0);
+    
+    regInDataData = 1152'h8f8e8d8c8b8a898887868584838281807f7e7d7c7b7a797877767574737271706f6e6d6c6b6a696867666564636261605f5e5d5c5b5a595857565554535251504f4e4d4c4b4a494847464544434241403f3e3d3c3b3a393837363534333231302f2e2d2c2b2a292827262524232221201f1e1d1c1b1a191817161514131211100f0e0d0c0b0a09080706050403020100;
+    regInDataWr = 1'b1; #(inClkp);
+    regInDataWr = 1'b0; regInDataData = 1152'b0;
+	
+    wait(outBusy == 1'b0 && regInClk == 1'b0);
+
+    regInDataData = 1152'h800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000006;
+    regInDataWr = 1'b1; regInDataEnd = 1'b1; #(inClkp);
+    regInDataWr = 1'b0; regInDataEnd = 1'b0; regInDataData = 1152'b0;
+	
+    wait(outHashEnable == 1'b1 && regInClk == 1'b0);
+    if(outDataData == 224'h45c9f78b6dadd5ea8b4315c654662cea5ff75848c03687f2119d0e66) begin
+        $display("TEST:%d OK HASH: %x", TEST, outDataData);
+    end else begin
+        $display("TEST:%d FAIL HASH: %x", TEST, outDataData);
+    end
+   
+   
+    regReset=1'b1;#(inClkp);
+    regReset=1'b0;#(inClkp);
+    TEST = TEST + 1;
+    ///////////////// Size of key and message are bigger than size of block in HMAC algorithm
+    regInKeyData = 1152'h8f8e8d8c8b8a898887868584838281807f7e7d7c7b7a797877767574737271706f6e6d6c6b6a696867666564636261605f5e5d5c5b5a595857565554535251504f4e4d4c4b4a494847464544434241403f3e3d3c3b3a393837363534333231302f2e2d2c2b2a292827262524232221201f1e1d1c1b1a191817161514131211100f0e0d0c0b0a09080706050403020100;
+    regInKeyWr = 1'b1; #(inClkp);
+    regInKeyWr = 1'b0; regInKeyData = 1152'b0;
+	
+    wait(outBusy == 1'b0 && regInClk == 1'b0);
+    
+    regInKeyData = 1152'h8000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000069b9a99989796959493929190;
+    regInKeyWr = 1'b1; regInKeyEnd = 1'b1; #(inClkp);
+    regInKeyWr = 1'b0; regInKeyEnd = 1'b0; regInKeyData = 1152'b0;
+	
+    wait(outBusy == 1'b0 && regInClk == 1'b0);
+    
+    regInDataData = 1152'h8f8e8d8c8b8a898887868584838281807f7e7d7c7b7a797877767574737271706f6e6d6c6b6a696867666564636261605f5e5d5c5b5a595857565554535251504f4e4d4c4b4a494847464544434241403f3e3d3c3b3a393837363534333231302f2e2d2c2b2a292827262524232221201f1e1d1c1b1a191817161514131211100f0e0d0c0b0a09080706050403020100;
+    regInDataWr = 1'b1; #(inClkp);
+    regInDataWr = 1'b0; regInDataData = 1152'b0;
+	
+    wait(outBusy == 1'b0 && regInClk == 1'b0);
+    
+    regInDataData = 1152'h8000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000069b9a99989796959493929190;
+    regInDataWr = 1'b1; regInDataEnd = 1'b1; #(inClkp);
+    regInDataWr = 1'b0; regInDataEnd = 1'b0; regInDataData = 1152'b0;
+	
+    wait(outHashEnable == 1'b1 && regInClk == 1'b0);
+    
+    if(outDataData == 224'h1a78c49527d339ed2bbf2510abaf0afbe8e1127d192d4e8bfe1a0180) begin
+        $display("TEST:%d OK HASH: %x", TEST, outDataData);
+    end else begin
+        $display("TEST:%d FAIL HASH: %x", TEST, outDataData);
+    end
+	wait(outBusy == 1'b0 && regInClk == 1'b0);
+   $stop;
+end
+
+endmodule
