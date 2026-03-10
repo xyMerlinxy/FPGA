@@ -6,10 +6,10 @@ from pathlib import Path
 
 def addConfiguration(testBench: TestBench, genericNameList: list[str], genericValueList: list[list[float]]):
   if(len(genericNameList) != len(genericValueList)):
-    raise Exception("Lists genericNameList[",len(genericNameList),"] and genericValueList[",len(genericValueList),"] must have same lenght",sep="")
+    raise Exception("Lists genericNameList[",len(genericNameList),"] and genericValueList[",len(genericValueList),"] must have same length")
 
-  # generate configDictionarys
-  configDictionarys: list[dict[str, float]] = []
+  # generate configDictionaries
+  configDictionaries: list[dict[str, float]] = []
   listIndex = [0]*len(genericNameList)
   do = True
   while do:
@@ -17,7 +17,7 @@ def addConfiguration(testBench: TestBench, genericNameList: list[str], genericVa
     for i, data in enumerate(zip(genericNameList,genericValueList)):
       name, values = data
       d[name] = values[listIndex[i]]
-    configDictionarys.append(d)
+    configDictionaries.append(d)
     # go to next index
     for i in range(len(listIndex)):
       if(listIndex[i]==len(genericValueList[i])-1):
@@ -29,9 +29,9 @@ def addConfiguration(testBench: TestBench, genericNameList: list[str], genericVa
         listIndex[i] += 1
         break
 
-  lenMaxConfigNumber = len(str(len(configDictionarys)))
+  lenMaxConfigNumber = len(str(len(configDictionaries)))
 
-  for i, config in enumerate(configDictionarys):
+  for i, config in enumerate(configDictionaries):
     name = "Config"+(str(i).rjust(lenMaxConfigNumber,"0"))
     print(testBench.name+" New configuration: "+name+str(config))
     testBench.add_config(name ,config)
@@ -54,7 +54,7 @@ vu.add_osvvm()
 vu.add_verification_components()
 
 RTL_PATH = Path(__file__).parent / "rtl"
-TEST_PATH = Path(__file__).parent / "test"
+TESTS_PATH = Path(__file__).parent / "tests"
 CURRENT_PATH = Path(__file__).parent.resolve()
 
 # Define libraries
@@ -62,13 +62,13 @@ ARP_and_CRC_check = vu.add_library("ARP_and_CRC_check")
 ARP_and_CRC_check.add_source_files(RTL_PATH / "*.v")
 
 tb_ARP_and_CRC_check = vu.add_library("tb_ARP_and_CRC_check")
-tb_ARP_and_CRC_check.add_source_files(TEST_PATH / "*.vhd")
+tb_ARP_and_CRC_check.add_source_files(TESTS_PATH / "*.vhd")
 
 
 
 
 if isModelSimOpen:
-  # Set simulation options(optymalisation)
+  # Set simulation options(optimization)
   vu.set_sim_option('modelsim.vsim_flags', ["-voptargs=\"+acc\""])
 #   if (CURRENT_PATH / 'scripts' / 'wave.do').exists():
 #     vu.set_sim_option('modelsim.init_files.after_load', [str(CURRENT_PATH / 'scripts' / 'wave.do')])

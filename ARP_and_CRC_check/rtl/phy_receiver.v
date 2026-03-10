@@ -1,4 +1,4 @@
-module phy_reciver(
+module phy_receiver(
   input wire rst_n,
   input wire [3:0] rxd,
   input wire rx_clk,
@@ -21,7 +21,7 @@ reg        r_sop;
 
 wire [3:0] in_data;
 // 0 - idle
-// 1 - preambule detected
+// 1 - preamble detected
 // 2 - transmission
 // 3 - ending
 
