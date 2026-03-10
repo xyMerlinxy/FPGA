@@ -39,14 +39,14 @@ module NoekeonControl(
 // 4 - Decryption
 // 5 - Final round of decryption
 
-reg  [4:0]    regRoundNum; 
+reg  [4:0]    regRoundCnt; 
 reg  [2:0]    regState = 3'd0;
 reg        regMode = 1'd0;
 reg        regDecipher = 1'd0;
 
 always @(posedge(inClk) or posedge(inReset)) begin
   if(inReset == 1'b1) begin
-    regRoundNum = 5'b0; 
+    regRoundCnt = 5'b0; 
     regState = 3'd0;
     regMode = 1'd0;
     regDecipher = 1'd0;
@@ -56,7 +56,7 @@ always @(posedge(inClk) or posedge(inReset)) begin
               // indirect key
               if((inKeyWr == 1'b1) & (inMode == 1'b1)) begin
                 regState = 3'd1;
-                regRoundNum = 5'b0;
+                regRoundCnt = 5'b0;
                 regDecipher = 1'b0;
                 regMode = 1'b1;
               end else begin
@@ -66,27 +66,27 @@ always @(posedge(inClk) or posedge(inReset)) begin
                   if(inDecipher == 1'b0) begin
                     regState = 3'd1;
                     regDecipher = 1'b0;
-                    regRoundNum = 5'b0;
+                    regRoundCnt = 5'b0;
                   // decrypt
                   end else begin
                     regState = 3'd4;
                     regDecipher = 1'b1;
-                    regRoundNum = 5'd16;
+                    regRoundCnt = 5'd16;
                   end
                 end
               end
             end
             
       3'd1 :  begin
-              if(regRoundNum < 5'd15) begin
-                regRoundNum = regRoundNum + 5'd1;
+              if(regRoundCnt < 5'd15) begin
+                regRoundCnt = regRoundCnt + 5'd1;
               end else begin
                 if(regMode == 1'b1) begin
                   regState = 3'd2;
-                  regRoundNum = regRoundNum + 5'd1;
+                  regRoundCnt = regRoundCnt + 5'd1;
                 end else begin
                   regState = 3'd3;
-                  regRoundNum = regRoundNum + 5'd1;
+                  regRoundCnt = regRoundCnt + 5'd1;
                 end
                 
               end
@@ -98,11 +98,11 @@ always @(posedge(inClk) or posedge(inReset)) begin
               regState = 3'd0;
             end
       3'd4 :  begin
-              if(regRoundNum > 5'd1) begin
-                regRoundNum = regRoundNum - 5'd1;
+              if(regRoundCnt > 5'd1) begin
+                regRoundCnt = regRoundCnt - 5'd1;
               end else begin
                 regState = 3'd5;
-                regRoundNum = regRoundNum - 5'd1;
+                regRoundCnt = regRoundCnt - 5'd1;
               end
             end
       3'd5 :  begin
@@ -112,7 +112,7 @@ always @(posedge(inClk) or posedge(inReset)) begin
   end
 end
 
-assign outRoundCounter = regRoundNum;
+assign outRoundCounter = regRoundCnt;
 
 assign outKeyWrExt = ((regState == 3'd0) & (inKeyWr==1'b1) & (inMode==1'b0)) ? 1'b1 : 1'b0;
 

@@ -111,7 +111,7 @@ NoekeonDataOutReg noekeon_DataOutReg(
 
 // ConstantBox
 NoekeonConstantBox noekeon_ConstantBox(
-  .inRoundNum(controlOutRoundCounter),
+  .inRoundCnt(controlOutRoundCounter),
  .outRoundConst(roundConstant)
 );
 
