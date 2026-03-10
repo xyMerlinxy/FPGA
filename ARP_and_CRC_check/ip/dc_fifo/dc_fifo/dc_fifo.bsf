@@ -1,0 +1,184 @@
+/*
+WARNING: Do NOT edit the input and output ports in this file in a text
+editor if you plan to continue editing the block that represents it in
+the Block Editor! File corruption is VERY likely to occur.
+*/
+/*
+Copyright (C) 2022  Intel Corporation. All rights reserved.
+Your use of Intel Corporation's design tools, logic functions 
+and other software and tools, and any partner logic 
+functions, and any output files from any of the foregoing 
+(including device programming or simulation files), and any 
+associated documentation or information are expressly subject 
+to the terms and conditions of the Intel Program License 
+Subscription Agreement, the Intel Quartus Prime License Agreement,
+the Intel FPGA IP License Agreement, or other applicable license
+agreement, including, without limitation, that your use is for
+the sole purpose of programming logic devices manufactured by
+Intel and sold by Intel or its authorized distributors.  Please
+refer to the applicable agreement for further details, at
+https://fpgasoftware.intel.com/eula.
+*/
+(header "symbol" (version "1.1"))
+(symbol
+	(rect 0 0 496 344)
+	(text "dc_fifo" (rect 228 -1 256 11)(font "Arial" (font_size 10)))
+	(text "inst" (rect 8 328 20 340)(font "Arial" ))
+	(port
+		(pt 0 72)
+		(input)
+		(text "dc_fifo_0_in_data[7..0]" (rect 0 0 93 12)(font "Arial" (font_size 8)))
+		(text "dc_fifo_0_in_data[7..0]" (rect 4 61 142 72)(font "Arial" (font_size 8)))
+		(line (pt 0 72)(pt 176 72)(line_width 3))
+	)
+	(port
+		(pt 0 88)
+		(input)
+		(text "dc_fifo_0_in_valid" (rect 0 0 74 12)(font "Arial" (font_size 8)))
+		(text "dc_fifo_0_in_valid" (rect 4 77 112 88)(font "Arial" (font_size 8)))
+		(line (pt 0 88)(pt 176 88)(line_width 1))
+	)
+	(port
+		(pt 0 120)
+		(input)
+		(text "dc_fifo_0_in_startofpacket" (rect 0 0 108 12)(font "Arial" (font_size 8)))
+		(text "dc_fifo_0_in_startofpacket" (rect 4 109 160 120)(font "Arial" (font_size 8)))
+		(line (pt 0 120)(pt 176 120)(line_width 1))
+	)
+	(port
+		(pt 0 136)
+		(input)
+		(text "dc_fifo_0_in_endofpacket" (rect 0 0 105 12)(font "Arial" (font_size 8)))
+		(text "dc_fifo_0_in_endofpacket" (rect 4 125 148 136)(font "Arial" (font_size 8)))
+		(line (pt 0 136)(pt 176 136)(line_width 1))
+	)
+	(port
+		(pt 0 152)
+		(input)
+		(text "dc_fifo_0_in_error" (rect 0 0 76 12)(font "Arial" (font_size 8)))
+		(text "dc_fifo_0_in_error" (rect 4 141 112 152)(font "Arial" (font_size 8)))
+		(line (pt 0 152)(pt 176 152)(line_width 1))
+	)
+	(port
+		(pt 0 192)
+		(input)
+		(text "dc_fifo_0_in_clk_clk" (rect 0 0 83 12)(font "Arial" (font_size 8)))
+		(text "dc_fifo_0_in_clk_clk" (rect 4 181 124 192)(font "Arial" (font_size 8)))
+		(line (pt 0 192)(pt 176 192)(line_width 1))
+	)
+	(port
+		(pt 0 232)
+		(input)
+		(text "dc_fifo_0_in_clk_reset_reset_n" (rect 0 0 129 12)(font "Arial" (font_size 8)))
+		(text "dc_fifo_0_in_clk_reset_reset_n" (rect 4 221 184 232)(font "Arial" (font_size 8)))
+		(line (pt 0 232)(pt 176 232)(line_width 1))
+	)
+	(port
+		(pt 496 104)
+		(input)
+		(text "dc_fifo_0_out_ready" (rect 0 0 86 12)(font "Arial" (font_size 8)))
+		(text "dc_fifo_0_out_ready" (rect 387 93 501 104)(font "Arial" (font_size 8)))
+		(line (pt 496 104)(pt 320 104)(line_width 1))
+	)
+	(port
+		(pt 0 272)
+		(input)
+		(text "dc_fifo_0_out_clk_clk" (rect 0 0 89 12)(font "Arial" (font_size 8)))
+		(text "dc_fifo_0_out_clk_clk" (rect 4 261 130 272)(font "Arial" (font_size 8)))
+		(line (pt 0 272)(pt 176 272)(line_width 1))
+	)
+	(port
+		(pt 0 312)
+		(input)
+		(text "dc_fifo_0_out_clk_reset_reset_n" (rect 0 0 135 12)(font "Arial" (font_size 8)))
+		(text "dc_fifo_0_out_clk_reset_reset_n" (rect 4 301 190 312)(font "Arial" (font_size 8)))
+		(line (pt 0 312)(pt 176 312)(line_width 1))
+	)
+	(port
+		(pt 0 104)
+		(output)
+		(text "dc_fifo_0_in_ready" (rect 0 0 80 12)(font "Arial" (font_size 8)))
+		(text "dc_fifo_0_in_ready" (rect 4 93 112 104)(font "Arial" (font_size 8)))
+		(line (pt 0 104)(pt 176 104)(line_width 1))
+	)
+	(port
+		(pt 496 72)
+		(output)
+		(text "dc_fifo_0_out_data[7..0]" (rect 0 0 99 12)(font "Arial" (font_size 8)))
+		(text "dc_fifo_0_out_data[7..0]" (rect 370 61 514 72)(font "Arial" (font_size 8)))
+		(line (pt 496 72)(pt 320 72)(line_width 3))
+	)
+	(port
+		(pt 496 88)
+		(output)
+		(text "dc_fifo_0_out_valid" (rect 0 0 80 12)(font "Arial" (font_size 8)))
+		(text "dc_fifo_0_out_valid" (rect 393 77 507 88)(font "Arial" (font_size 8)))
+		(line (pt 496 88)(pt 320 88)(line_width 1))
+	)
+	(port
+		(pt 496 120)
+		(output)
+		(text "dc_fifo_0_out_startofpacket" (rect 0 0 114 12)(font "Arial" (font_size 8)))
+		(text "dc_fifo_0_out_startofpacket" (rect 350 109 512 120)(font "Arial" (font_size 8)))
+		(line (pt 496 120)(pt 320 120)(line_width 1))
+	)
+	(port
+		(pt 496 136)
+		(output)
+		(text "dc_fifo_0_out_endofpacket" (rect 0 0 110 12)(font "Arial" (font_size 8)))
+		(text "dc_fifo_0_out_endofpacket" (rect 354 125 504 136)(font "Arial" (font_size 8)))
+		(line (pt 496 136)(pt 320 136)(line_width 1))
+	)
+	(port
+		(pt 496 152)
+		(output)
+		(text "dc_fifo_0_out_error" (rect 0 0 82 12)(font "Arial" (font_size 8)))
+		(text "dc_fifo_0_out_error" (rect 391 141 505 152)(font "Arial" (font_size 8)))
+		(line (pt 496 152)(pt 320 152)(line_width 1))
+	)
+	(drawing
+		(text "dc_fifo_0_in" (rect 103 43 278 99)(font "Arial" (color 128 0 0)(font_size 9)))
+		(text "data" (rect 181 67 386 144)(font "Arial" (color 0 0 0)))
+		(text "valid" (rect 181 83 392 176)(font "Arial" (color 0 0 0)))
+		(text "ready" (rect 181 99 392 208)(font "Arial" (color 0 0 0)))
+		(text "startofpacket" (rect 181 115 440 240)(font "Arial" (color 0 0 0)))
+		(text "endofpacket" (rect 181 131 428 272)(font "Arial" (color 0 0 0)))
+		(text "error" (rect 181 147 392 304)(font "Arial" (color 0 0 0)))
+		(text "dc_fifo_0_in_clk" (rect 79 163 254 339)(font "Arial" (color 128 0 0)(font_size 9)))
+		(text "clk" (rect 181 187 380 384)(font "Arial" (color 0 0 0)))
+		(text "dc_fifo_0_in_clk_reset" (rect 41 203 214 419)(font "Arial" (color 128 0 0)(font_size 9)))
+		(text "reset_n" (rect 181 227 404 464)(font "Arial" (color 0 0 0)))
+		(text "dc_fifo_0_out" (rect 321 43 720 99)(font "Arial" (color 128 0 0)(font_size 9)))
+		(text "data" (rect 299 67 622 144)(font "Arial" (color 0 0 0)))
+		(text "valid" (rect 297 83 624 176)(font "Arial" (color 0 0 0)))
+		(text "ready" (rect 292 99 614 208)(font "Arial" (color 0 0 0)))
+		(text "startofpacket" (rect 260 115 598 240)(font "Arial" (color 0 0 0)))
+		(text "endofpacket" (rect 265 131 596 272)(font "Arial" (color 0 0 0)))
+		(text "error" (rect 295 147 620 304)(font "Arial" (color 0 0 0)))
+		(text "dc_fifo_0_out_clk" (rect 71 243 244 499)(font "Arial" (color 128 0 0)(font_size 9)))
+		(text "clk" (rect 181 267 380 544)(font "Arial" (color 0 0 0)))
+		(text "dc_fifo_0_out_clk_reset" (rect 33 283 204 579)(font "Arial" (color 128 0 0)(font_size 9)))
+		(text "reset_n" (rect 181 307 404 624)(font "Arial" (color 0 0 0)))
+		(text " dc_fifo " (rect 462 328 978 666)(font "Arial" ))
+		(line (pt 176 32)(pt 320 32)(line_width 1))
+		(line (pt 320 32)(pt 320 328)(line_width 1))
+		(line (pt 176 328)(pt 320 328)(line_width 1))
+		(line (pt 176 32)(pt 176 328)(line_width 1))
+		(line (pt 177 52)(pt 177 156)(line_width 1))
+		(line (pt 178 52)(pt 178 156)(line_width 1))
+		(line (pt 177 172)(pt 177 196)(line_width 1))
+		(line (pt 178 172)(pt 178 196)(line_width 1))
+		(line (pt 177 212)(pt 177 236)(line_width 1))
+		(line (pt 178 212)(pt 178 236)(line_width 1))
+		(line (pt 319 52)(pt 319 156)(line_width 1))
+		(line (pt 318 52)(pt 318 156)(line_width 1))
+		(line (pt 177 252)(pt 177 276)(line_width 1))
+		(line (pt 178 252)(pt 178 276)(line_width 1))
+		(line (pt 177 292)(pt 177 316)(line_width 1))
+		(line (pt 178 292)(pt 178 316)(line_width 1))
+		(line (pt 0 0)(pt 496 0)(line_width 1))
+		(line (pt 496 0)(pt 496 344)(line_width 1))
+		(line (pt 0 344)(pt 496 344)(line_width 1))
+		(line (pt 0 0)(pt 0 344)(line_width 1))
+	)
+)

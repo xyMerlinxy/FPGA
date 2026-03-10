@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<simPackage>
+ <file
+   path="simulation/submodules/altera_avalon_sc_fifo.v"
+   type="VERILOG"
+   library="sc_fifo_0" />
+ <file path="simulation/sc_fifo.v" type="VERILOG" />
+ <topLevel name="sc_fifo" />
+ <deviceFamily name="cycloneive" />
+</simPackage>

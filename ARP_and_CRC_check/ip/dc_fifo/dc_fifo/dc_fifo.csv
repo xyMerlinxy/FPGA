@@ -1,0 +1,20 @@
+# system info dc_fifo on 2023.12.15.14:33:20
+system_info:
+name,value
+DEVICE,EP4CE115F29C7
+DEVICE_FAMILY,Cyclone IV E
+GENERATION_ID,1702647200
+#
+#
+# Files generated for dc_fifo on 2023.12.15.14:33:20
+files:
+filepath,kind,attributes,module,is_top
+simulation/dc_fifo.v,VERILOG,,dc_fifo,true
+simulation/submodules/altera_avalon_dc_fifo.v,VERILOG,,altera_avalon_dc_fifo,false
+simulation/submodules/altera_dcfifo_synchronizer_bundle.v,VERILOG,,altera_avalon_dc_fifo,false
+simulation/submodules/altera_std_synchronizer_nocut.v,VERILOG,,altera_avalon_dc_fifo,false
+#
+# Map from instance-path to kind of module
+instances:
+instancePath,module
+dc_fifo.dc_fifo_0,altera_avalon_dc_fifo
