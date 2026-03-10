@@ -1,10 +1,10 @@
-// Moduł realizuje operację Theta algorytmu Noekeon
-// Jest to moduł kombinacyjny
+// This module implements the Theta operation of the Noekeon algorithm.
+// This is a combinatorial module.
 
 module NoekeonTheta(
-	input wire	[127:0]	inData,
-	input wire	[127:0]	inKey,
-	output wire	[127:0]	outData
+  input wire  [127:0]  inData,
+  input wire  [127:0]  inKey,
+  output wire  [127:0]  outData
 );
 
 assign outData[007:000] = inKey[007:000] ^ inData[039:032] ^ inKey[039:032] ^ inData[103:096] ^ inKey[103:096] ^ inData[047:040] ^ inKey[047:040] ^ inData[111:104] ^ inKey[111:104] ^ inData[063:056] ^ inKey[063:056] ^ inData[127:120] ^ inData[007:000] ^ inKey[127:120];
