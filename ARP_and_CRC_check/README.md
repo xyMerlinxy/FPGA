@@ -47,9 +47,9 @@ Automated testing and verification were performed with VUnit.
 ### Resource Utilization
 - Logic (ALM/LE): 1001
 - Registers: 550
-- Memory Bits 20992
+- Memory Bits: 20992
 ### Timing Analysis
 The design achieves the following maximum frequencies, satisfying all operational requirements for Ethernet transmission:
-- tx_clk: 66 MHz
-- clk (System): 72 MHz
-- rx_clk: 151 MHz
+- tx_clk: 66 MHz (needed: 10 MHz)
+- clk (System): 72 MHz (needed: 20 MHz)
+- rx_clk: 151 MHz (needed: 10 MHz)
