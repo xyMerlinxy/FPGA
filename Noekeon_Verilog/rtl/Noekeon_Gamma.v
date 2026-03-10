@@ -1,8 +1,8 @@
-// Moduł realizujący opearcję Gamma
+// Module implementing the Gamma operation
 
 module NoekeonGamma(
-	input wire	[127:0]	inData,
-	output wire	[127:0]	outData
+  input wire  [127:0]  inData,
+  output wire  [127:0]  outData
 );
 
 NoekeonGammaSbox sbox00(.inData({inData[096], inData[064], inData[032], inData[000]}), .outData({outData[096], outData[064], outData[032], outData[000]}));
