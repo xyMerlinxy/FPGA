@@ -111,9 +111,9 @@ always @(*) begin
     11'd13: correct_data <= 8'h00;
     11'd14: correct_data <= 8'h45;  // version, ihl
     // 11'd15: correct_data <= // dscp
-    // 11'd16: correct_data <=  //total lenght
+    // 11'd16: correct_data <=  //total length
     // 11'd17: correct_data <=
-    // 11'd18: correct_data <=  //identyfication
+    // 11'd18: correct_data <=  //identification
     // 11'd19: correct_data <=
     // 11'd20: correct_data <= // flag
     // 11'd21: correct_data <=

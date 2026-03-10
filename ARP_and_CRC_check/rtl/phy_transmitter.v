@@ -1,4 +1,4 @@
-module phy_transciver(
+module phy_transmitter(
   input wire rst_n,
 
   output wire [3:0] txd,
@@ -20,8 +20,8 @@ reg [3:0] out_data;
 
 reg [1:0] r_state;
 // 0 - idle
-// 1 - preambule sending
-// 2 - end_preambule
+// 1 - preamble sending
+// 2 - end_preamble
 // 3 - data sending
 
 wire asi_ta, asi_eta;

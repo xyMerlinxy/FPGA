@@ -103,7 +103,7 @@ always @(*) begin
     11'd13: correct_data <= 8'h06;
     11'd14: correct_data <= 8'h00; // hardware type ethernet
     11'd15: correct_data <= 8'h01;
-    11'd16: correct_data <= 8'h08; // prtocol type IPv4
+    11'd16: correct_data <= 8'h08; // protocol type IPv4
     11'd17: correct_data <= 8'h00;
     11'd18: correct_data <= 8'h06; //hardware size
     11'd19: correct_data <= 8'h04; // protocol size
@@ -151,7 +151,7 @@ always @(*) begin
     11'd13: sending_data <= 8'h06;
     11'd14: sending_data <= 8'h00; // hardware type ethernet
     11'd15: sending_data <= 8'h01;
-    11'd16: sending_data <= 8'h08; // prtocol type IPv4
+    11'd16: sending_data <= 8'h08; // protocol type IPv4
     11'd17: sending_data <= 8'h00;
     11'd18: sending_data <= 8'h06; //hardware size
     11'd19: sending_data <= 8'h04; // protocol size

@@ -87,7 +87,7 @@ wire       as_dcf1_tran_ready;
 wire       as_dcf1_tran_sop;
 wire       as_dcf1_tran_eop;
 
-phy_reciver  phy_reciver_inst (
+phy_receiver  phy_receiver_inst (
     .rst_n(rst_n),
     .rxd(rxd),
     .rx_clk(rx_clk),
@@ -160,28 +160,28 @@ phy_reciver  phy_reciver_inst (
   );
 
   sc_fifo sc_fifo_inst_0 (
-		.sc_fifo_0_clk_clk(clk),
-		.sc_fifo_0_clk_reset_reset(~rst_n),
-		.sc_fifo_0_csr_address(1'd0),
-		.sc_fifo_0_csr_read(1'd0),
-		.sc_fifo_0_csr_write(1'd0),
-		.sc_fifo_0_csr_readdata(),
-		.sc_fifo_0_csr_writedata(1'd0),
+    .sc_fifo_0_clk_clk(clk),
+    .sc_fifo_0_clk_reset_reset(~rst_n),
+    .sc_fifo_0_csr_address(1'd0),
+    .sc_fifo_0_csr_read(1'd0),
+    .sc_fifo_0_csr_write(1'd0),
+    .sc_fifo_0_csr_readdata(),
+    .sc_fifo_0_csr_writedata(1'd0),
 
-		.sc_fifo_0_in_data(as_crc_scf0_data),
-		.sc_fifo_0_in_valid(as_crc_scf0_valid),
-		.sc_fifo_0_in_ready(as_crc_scf0_ready),
-		.sc_fifo_0_in_startofpacket(as_crc_scf0_sop),
-		.sc_fifo_0_in_endofpacket(as_crc_scf0_eop),
-		.sc_fifo_0_in_error(as_crc_scf0_error),
+    .sc_fifo_0_in_data(as_crc_scf0_data),
+    .sc_fifo_0_in_valid(as_crc_scf0_valid),
+    .sc_fifo_0_in_ready(as_crc_scf0_ready),
+    .sc_fifo_0_in_startofpacket(as_crc_scf0_sop),
+    .sc_fifo_0_in_endofpacket(as_crc_scf0_eop),
+    .sc_fifo_0_in_error(as_crc_scf0_error),
 
-		.sc_fifo_0_out_data(as_scf0_arpudp_data),
-		.sc_fifo_0_out_valid(as_scf0_arpudp_valid),
-		.sc_fifo_0_out_ready(as_scf0_udp_ready && as_scf0_arp_ready),
-		.sc_fifo_0_out_startofpacket(as_scf0_arpudp_sop), 
-		.sc_fifo_0_out_endofpacket(as_scf0_arpudp_eop),
-		.sc_fifo_0_out_error()
-	);
+    .sc_fifo_0_out_data(as_scf0_arpudp_data),
+    .sc_fifo_0_out_valid(as_scf0_arpudp_valid),
+    .sc_fifo_0_out_ready(as_scf0_udp_ready && as_scf0_arp_ready),
+    .sc_fifo_0_out_startofpacket(as_scf0_arpudp_sop), 
+    .sc_fifo_0_out_endofpacket(as_scf0_arpudp_eop),
+    .sc_fifo_0_out_error()
+  );
   arp_service #(
     .IP_ADDRESS(IP_ADDRESS),
     .MAC_ADDRESS(MAC_ADDRESS)
@@ -257,7 +257,7 @@ phy_reciver  phy_reciver_inst (
     .dc_fifo_0_out_clk_reset_reset_n(rst_n)
   );
 
-  phy_transciver phy_transciver_inst (
+  phy_transmitter phy_transmitter_inst (
     .rst_n(rst_n),
     .txd(txd),
     .tx_clk(tx_clk),

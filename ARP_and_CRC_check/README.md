@@ -12,9 +12,9 @@ The system is composed of 13 specialized hardware modules, integrated within the
 ### Core Modules
 - ARP_and_CRC_check (Top-Level Module): The main structural entity that interconnects all sub-modules. It manages the data flow between the PHY interfaces, FIFOs, and protocol services.
 
-- phy_reciver: Interfaces with the Marvell Alaska 88E1111 (RX) and converts incoming signals into the Avalon Streaming interface format.
+- phy_receiver: Interfaces with the Marvell Alaska 88E1111 (RX) and converts incoming signals into the Avalon Streaming interface format.
 
-- phy_transciver: Converts data from the Avalon Streaming interface back to the TX signals required by the Marvell Alaska 88E1111 PHY.
+- phy_transmitter: Converts data from the Avalon Streaming interface back to the TX signals required by the Marvell Alaska 88E1111 PHY.
 
 - arp_service: Handles ARP (Address Resolution Protocol) queries. It inspects the target IP field; if it matches the module's hardcoded parameter, it generates a standard Ethernet reply frame.
 
