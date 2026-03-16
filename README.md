@@ -5,40 +5,54 @@ This repository is a collection of my digital design projects implemented in HDL
 ### HMAC-SHA3
 A high-performance hardware implementation of the HMAC-SHA-3 (Keyed-Hash Message Authentication Code) based on the Keccak-f[1600] permutation.
 
-Key Features: Full support for SHA3-224 through SHA3-512, iterative architecture, and compliance with FIPS 202 and FIPS 198-1 standards.
+Key Features:
+- Full support for SHA3-224 through SHA3-512, iterative architecture, and compliance with FIPS 202 and FIPS 198-1 standards.
 
 Applications: Data authentication and integrity verification in secure communication systems.
 
 Tools & Technologies:
-Languages: Verilog
-Simulation: QuestaSim
-Synthesis: Intel Quartus Prime
+- Languages: Verilog
+- Simulation: QuestaSim
+- Synthesis: Intel Quartus Prime
 
 ### Noekeon
 Hardware implementation of the Noekeon block cipher, a symmetric key algorithm known for its high efficiency in both hardware and software.
 
-Key Features: Compact design optimized for FPGA resources, supporting both encryption and decryption modes.
+Key Features:
+- Compact design optimized for FPGA resources, supporting both encryption and decryption modes.
 
 Applications: Lightweight cryptography for embedded systems and secure data storage.
 
-
 Tools & Technologies:
-Languages: Verilog
-Simulation: QuestaSim
-Synthesis: Intel Quartus Prime
+- Languages: Verilog
+- Simulation: QuestaSim
+- Synthesis: Intel Quartus Prime
 
 ### ARP and CRC Check
 A network-oriented module designed for Ethernet frame processing and error detection.
 
 Key Features:
-
-ARP (Address Resolution Protocol): Logic for handling/filtering ARP packets in hardware.
-
-CRC Check: Real-time Cyclic Redundancy Check (CRC32) calculation and verification for incoming data streams.
+- ARP (Address Resolution Protocol): Logic for handling/filtering ARP packets in hardware.
+- CRC Check: Real-time Cyclic Redundancy Check (CRC32) calculation and verification for incoming data streams.
 
 Applications: Network interfaces, hardware firewalls, and industrial Ethernet controllers.
 
-Tools & Technologies
-Languages: Verilog, VHDL
-Simulation: VUnit, QuestaSim
-Synthesis: Intel Quartus Prime
+Tools & Technologies:
+- Languages: Verilog, VHDL
+- Simulation: VUnit, QuestaSim
+- Synthesis: Intel Quartus Prime
+
+### LFSR — Linear Feedback Shift Register
+A configurable pseudo-random number generator implemented in VHDL-93 using Galois topology.
+
+Key Features:
+- Configurable width: Supports register widths from 2 to 64 bits with customizable seed and feedback polynomial taps.
+- Maximal-length sequence: Generates sequences of length `2^n - 1` for primitive polynomials.
+- Automated testing: Test cases auto-generated in Python using `pylfsr`, covering multiple widths and sequence lengths.
+
+Applications: noise generation and stream encryption.
+
+Tools & Technologies:
+- Languages: VHDL (VHDL-93)
+- Simulation: VUnit, GHDL, QuestaSim
+- Synthesis: Intel Quartus Prime (Cyclone V, DE0-CV)
