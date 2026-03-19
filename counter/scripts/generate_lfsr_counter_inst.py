@@ -1,7 +1,6 @@
 import math
-
-from pylfsr import LFSR
 import sys
+import numpy as np
 
 taps = {
     4: [4, 3],
@@ -68,8 +67,74 @@ taps = {
 }
 
 
+def generate_galois_matrix(lfsr_len, taps):
+    """
+    Generates the transition matrix for a Galois LFSR.
+
+    In a Galois configuration, the output bit is fed back into
+    specific positions (taps) within the register.
+
+    Parameters:
+    lfsr_len (int): Number of bits in the register.
+    taps (list): Indices of the bits where the feedback is applied.
+
+    Returns:
+    np.ndarray: An (n x n) transition matrix M.
+    """
+    # Initialize a square matrix with zeros (using int8 for memory efficiency)
+    matrix = np.zeros((lfsr_len, lfsr_len), dtype=np.int8)
+
+    # SHIFT OPERATION:
+    # Bit at position 'i' moves to position 'i + 1'.
+    # This creates a sub-diagonal of 1s.
+    for i in range(lfsr_len - 1):
+        matrix[i, i + 1] = 1
+
+    # FEEDBACK OPERATION:
+    # The last bit (the output bit) is XORed back into the positions
+    # defined by the 'taps' list.
+    for tap in taps:
+        matrix[lfsr_len - 1, lfsr_len - tap - 1] = 1
+
+    return matrix
+
+
+def lfsr_fast_forward(matrix, state, steps):
+    """
+    Calculates the LFSR state after N steps using binary matrix exponentiation.
+
+    The state at step N is calculated as: State_n = (M^n * State_0) mod 2.
+    Using binary exponentiation reduces complexity from O(N) to O(log N).
+    """
+
+    def matrix_pow_mod2(base, p):
+        """Efficiently raises a matrix to power 'p' in GF(2) field."""
+        size = base.shape[0]
+        # Identity matrix for GF(2)
+        res = np.eye(size, dtype=np.int8)
+
+        while p > 0:
+            if p % 2 == 1:
+                # Matrix multiplication followed by modulo 2 (XOR logic)
+                res = (res @ base) % 2
+
+            # Square the base matrix
+            base = (base @ base) % 2
+            p //= 2
+        return res
+
+    # 1. Compute the N-th power of the transition matrix
+    matrix_n = matrix_pow_mod2(matrix, steps)
+
+    # 2. Multiply the powered matrix by the initial state vector
+    # Result must be modulo 2 to stay within the binary field
+    final_state = np.dot(state, matrix_n) % 2
+
+    return final_state
+
+
 def state_to_int(state):
-    return int("".join(str(b) for b in state[::-1]), 2)
+    return int("".join(str(b) for b in state), 2)
 
 
 if len(sys.argv) != 2:
@@ -80,14 +145,19 @@ elif not sys.argv[1].isnumeric():
 
 steps = int(sys.argv[1])
 size = math.ceil(math.log(steps, 2) + 1)
+
 tap = taps[size]
+taps_list = list(i - 1 for i in tap)
 
+result = np.ones(size, dtype=np.int8)
 
-L = LFSR(fpoly=tap, initstate="ones", conf="galois")
-L.runKCycle(steps - 2)
-output_int = state_to_int(L.state)
+# Generate the Galois Matrix
+M_galois = generate_galois_matrix(size, taps_list)
+
+# Jump steps forward instantly
+result = lfsr_fast_forward(M_galois, result, steps - 2)
+output_int = state_to_int(result)
 seed = hex(output_int)[2:].rjust(16, "0")
-
 print(f"""-- LFSR counter to {steps}
 lfsr_cnt : entity work.lfsr_counter
     generic map (
