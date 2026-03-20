@@ -45,9 +45,8 @@ for tb_name, config_file in CONFIG_FILES.items():
     add_configs(tb, config_file)
 
     if "-g" in sys.argv or "--gui" in sys.argv:
-        vu.set_sim_option("modelsim.vsim_flags", ["-voptargs=+acc"])  # pyright: ignore[reportArgumentType]
+        # vu.set_sim_option("modelsim.vsim_flags", ["-voptargs=+acc"])  # pyright: ignore[reportArgumentType]
 
-        vsim_flags = ["-voptargs=+acc"]
         wave_file = f"scripts/wave/{tb_name}.do"
         if os.path.exists(wave_file):
             vu.set_sim_option("modelsim.init_files.after_load", [wave_file])  # pyright: ignore[reportArgumentType]
