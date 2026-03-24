@@ -49,8 +49,9 @@ if "-g" in sys.argv or "--gui" in sys.argv:
 
     for tb in tb_ecdsa.get_test_benches():
         wave_file = f"scripts/wave/no_dsp/{tb.name}.do"
+        print(wave_file)
         if os.path.exists(wave_file):
-            vu.set_sim_option("modelsim.init_files.after_load", [wave_file])  # pyright: ignore[reportArgumentType]
+            tb.set_sim_option("modelsim.init_files.after_load", [wave_file])  # pyright: ignore[reportArgumentType]
 
 
 vu.main()
