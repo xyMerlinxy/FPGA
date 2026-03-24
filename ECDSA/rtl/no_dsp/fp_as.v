@@ -1,5 +1,5 @@
 module fp_as #(
-  parameter [191:0] MOD_P = 29
+  parameter [191:0] MOD_P = 192'hfffffffffffffffffffffffffffffffeffffffffffffffff
 ) (
   clk,
   rst_n,
