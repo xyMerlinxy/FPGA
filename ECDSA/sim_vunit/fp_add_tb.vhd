@@ -122,6 +122,7 @@ begin
       info("PROCESS_MAIN: TEST_ADD");
       check_result(s_i_data_a, s_i_data_b, s_i_data_wr, x"000000000000000000000000000000000000000000000001", x"000000000000000000000000000000000000000000000002", x"000000000000000000000000000000000000000000000003");
       check_result(s_i_data_a, s_i_data_b, s_i_data_wr, x"fffffffffffffffffffffffffffffffefffffffffffffffe", x"000000000000000000000000000000000000000000000002", x"000000000000000000000000000000000000000000000001");
+      check_result(s_i_data_a, s_i_data_b, s_i_data_wr, x"fffffffffffffffffffffffffffffffefffffffffffffffe", x"fffffffffffffffffffffffffffffffefffffffffffffffe", x"fffffffffffffffffffffffffffffffefffffffffffffffd");
       info("PROCESS_MAIN: TEST_ADD DONE");
     end if;
     main_done <= true;
