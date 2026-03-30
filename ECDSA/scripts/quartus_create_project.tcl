@@ -44,6 +44,16 @@ set_instance_assignment -name VIRTUAL_PIN ON -to o_data_x
 set_instance_assignment -name VIRTUAL_PIN ON -to o_data_y
 set_instance_assignment -name VIRTUAL_PIN ON -to o_data_z
 set_instance_assignment -name VIRTUAL_PIN ON -to o_valid
+set_instance_assignment -name VIRTUAL_PIN ON -to i_data_a
+set_instance_assignment -name VIRTUAL_PIN ON -to i_data_b
+set_instance_assignment -name VIRTUAL_PIN ON -to i_operation
+set_instance_assignment -name VIRTUAL_PIN ON -to o_data
+set_instance_assignment -name VIRTUAL_PIN ON -to i_data_x1
+set_instance_assignment -name VIRTUAL_PIN ON -to i_data_x2
+set_instance_assignment -name VIRTUAL_PIN ON -to i_data_y1
+set_instance_assignment -name VIRTUAL_PIN ON -to i_data_y2
+set_instance_assignment -name VIRTUAL_PIN ON -to i_data_z1
+set_instance_assignment -name VIRTUAL_PIN ON -to i_data_z2
 
 # Save and close
 export_assignments
