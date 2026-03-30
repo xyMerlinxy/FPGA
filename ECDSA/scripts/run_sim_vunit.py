@@ -30,14 +30,15 @@ vu.add_vhdl_builtins()
 vu.add_verification_components()
 
 CURRENT_PATH = Path(__file__).parent.resolve()
+PROJECT_PATH = CURRENT_PATH / ".."
 
 # rtl
 ecdsa = vu.add_library("ecdsa")
-ecdsa.add_source_files(CURRENT_PATH / "rtl" / "no_dsp" / "*.v")
+ecdsa.add_source_files(PROJECT_PATH / "rtl" / "*.v")
 
 # test bench
 tb_ecdsa = vu.add_library("tb_ecdsa")
-tb_ecdsa.add_source_files(CURRENT_PATH / "tests" / "no_dsp" / "*.vhd")
+tb_ecdsa.add_source_files(PROJECT_PATH / "sim_vunit" / "*.vhd")
 
 
 for tb_name, config_file in CONFIG_FILES.items():

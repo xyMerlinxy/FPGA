@@ -78,15 +78,13 @@ always @(posedge clk) begin
       end
       OP_ADD_0_W: begin
         if(w_as_valid) begin
-          $display("D %h + %h = %h", r_out, r_as_data_b,  w_as_data_out);
-          $display("bit %h", r_in_b[191]);
           if(r_in_b[191]) begin
             r_state <= OP_ADD_1_S;
             r_as_data_wr <= 1'b1;
             r_as_data_b <= r_in_a;
-          end else begin
+          end else begin // don't add
             r_as_data_b <= w_as_data_out;
-            if (r_bit_cnt == 191) begin
+            if (r_bit_cnt == 192) begin
               r_state <= OP_IDLE;
               r_o_valid <= 1'b1;
             end else begin
@@ -102,7 +100,6 @@ always @(posedge clk) begin
       end
       OP_ADD_1_W: begin
         if(w_as_valid) begin
-          $display("A %h + %h = %h", r_out, r_as_data_b,  w_as_data_out);
           r_as_data_b <= w_as_data_out;
           if (r_bit_cnt == 192) begin
             r_state <= OP_IDLE;
@@ -119,19 +116,10 @@ end
 
 // r_out
 always @(posedge clk) begin
-  if (!rst_n) begin
+  if(r_state == OP_IDLE && i_data_wr) begin
     r_out <= 192'b0;
-  end else begin
-    case (r_state)
-      OP_IDLE: begin
-        if(i_data_wr)
-          r_out <= 192'b0;
-      end
-      OP_ADD_0_W, OP_ADD_1_W: begin
-        if(w_as_valid)
-          r_out <= w_as_data_out;
-      end
-    endcase
+  end else if (w_as_valid) begin
+    r_out <= w_as_data_out;
   end
 end
 
@@ -141,9 +129,8 @@ always @(posedge clk) begin
     OP_IDLE: begin
       r_bit_cnt <= 1'b0;
     end
-    OP_ADD_0_W: begin
-      if(w_as_valid)
-        r_bit_cnt <= r_bit_cnt + 1'b1;
+    OP_ADD_0_S: begin
+      r_bit_cnt <= r_bit_cnt + 1'b1;
     end
   endcase
 end
