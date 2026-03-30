@@ -49,7 +49,7 @@ if "-g" in sys.argv or "--gui" in sys.argv:
     vu.set_sim_option("modelsim.vsim_flags", ["-voptargs=+acc"])  # pyright: ignore[reportArgumentType]
 
     for tb in tb_ecdsa.get_test_benches():
-        wave_file = f"scripts/wave/no_dsp/{tb.name}.do"
+        wave_file = f"scripts/wave/{tb.name}.do"
         print(wave_file)
         if os.path.exists(wave_file):
             tb.set_sim_option("modelsim.init_files.after_load", [wave_file])  # pyright: ignore[reportArgumentType]
