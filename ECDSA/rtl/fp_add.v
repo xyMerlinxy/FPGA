@@ -34,9 +34,7 @@ reg [191:0] r_in_b;
 reg [3:0] r_state;
 
 
-reg [191:0] r_add_data_a;
-reg [191:0] r_add_data_b;
-reg [191:0] r_sub_data_a;
+reg [192:0] r_sub_data_a;
 
 reg [191:0] r_sub_output;
 reg [191:0] r_add_output;
@@ -50,7 +48,7 @@ reg r_carry;
 
 // r_sub_data_a separate additions and subtract
 always @(posedge clk) begin
-  r_sub_data_a <= r_add_output;
+  r_sub_data_a <= {r_carry_add[2], r_add_output};
 end
 
 // save inputs
@@ -69,7 +67,7 @@ always @(posedge clk) begin
 
       {r_carry_sub[0], r_sub_output[063:000]} <=  r_sub_data_a[063:000] - MOD_P[063:000];
       {r_carry_sub[1], r_sub_output[127:064]} <=  r_sub_data_a[127:064] - MOD_P[127:064] - r_carry_sub[0];
-      {r_carry_sub[2], r_sub_output[191:128]} <=  r_sub_data_a[191:128] - MOD_P[191:128] - r_carry_sub[1];
+      {r_carry_sub[2], r_sub_output[191:128]} <=  r_sub_data_a[192:128] - MOD_P[191:128] - r_carry_sub[1];
 end
 
 // save output
