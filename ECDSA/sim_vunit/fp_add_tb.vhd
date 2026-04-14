@@ -1,14 +1,11 @@
 library ieee;
 use ieee.std_logic_1164.all;
-use ieee.numeric_std.all;
 
 library vunit_lib;
 context vunit_lib.vunit_context;
-context vunit_lib.com_context;
 context vunit_lib.data_types_context;
-use vunit_lib.avalon_stream_pkg.all;
-use vunit_lib.stream_master_pkg.all;
-use vunit_lib.stream_slave_pkg.all;
+
+library ecdsa;
 
 entity fp_add_tb is
   generic (runner_cfg : string);
@@ -18,66 +15,70 @@ architecture tb of fp_add_tb is
   constant WIDTH : integer range 0 to 200               := 192;
   constant MOD_P : std_logic_vector(WIDTH - 1 downto 0) := x"fffffffffffffffffffffffffffffffeffffffffffffffff";
 
-  component fp_add
-    generic (
-      MOD_P : std_logic_vector(WIDTH - 1 downto 0)
-    );
-    port (
-      clk       : in std_logic;
-      rst_n     : in std_logic;
-      i_data_a  : in std_logic_vector (WIDTH - 1 downto 0);
-      i_data_b  : in std_logic_vector (WIDTH - 1 downto 0);
-      i_data_wr : in std_logic;
-      o_data    : out std_logic_vector (WIDTH - 1 downto 0);
-      o_valid   : out std_logic
-    );
-  end component;
-
   -- INTERNAL SIGNALS DECLARATION --
   signal clk   : std_logic := '0';
   signal rst_n : std_logic := '0';
 
-  signal s_i_data_a  : std_logic_vector (WIDTH - 1 downto 0);
-  signal s_i_data_b  : std_logic_vector (WIDTH - 1 downto 0);
-  signal s_i_data_wr : std_logic := '0';
-  signal s_o_data    : std_logic_vector (WIDTH - 1 downto 0);
-  signal s_o_valid   : std_logic;
+  signal s_o_i_ready : std_logic;
+  signal s_i_i_valid : std_logic := '0';
+  signal s_i_i_a     : std_logic_vector (WIDTH - 1 downto 0);
+  signal s_i_i_b     : std_logic_vector (WIDTH - 1 downto 0);
 
+  signal s_i_o_ready : std_logic := '0';
+  signal s_o_o_valid : std_logic;
+  signal s_o_o_data  : std_logic_vector (WIDTH - 1 downto 0);
+
+  -- SIMULATION SIGNALS DECLARATION --
   signal start_stimuli, stimuli_done : boolean := false;
-  signal main_done                   : boolean := false;
+  signal push_done, check_done       : boolean := false;
 
-  procedure check_result(
-    signal s_data_a  : out std_logic_vector(WIDTH - 1 downto 0);
-    signal s_data_b  : out std_logic_vector(WIDTH - 1 downto 0);
-    signal s_data_wr : out std_logic;
-    data_a           : std_logic_vector(WIDTH - 1 downto 0);
-    data_b           : std_logic_vector(WIDTH - 1 downto 0);
-    result           : std_logic_vector(WIDTH - 1 downto 0)
+  procedure push_data(
+    signal s_ready : in std_logic;
+    signal s_valid : out std_logic;
+    signal s_a     : out std_logic_vector(WIDTH - 1 downto 0);
+    signal s_b     : out std_logic_vector(WIDTH - 1 downto 0);
+    data_a         : std_logic_vector(WIDTH - 1 downto 0);
+    data_b         : std_logic_vector(WIDTH - 1 downto 0)
   ) is
   begin
-    s_data_a  <= data_a;
-    s_data_b  <= data_b;
-    s_data_wr <= '1';
-    wait until (rising_edge(clk));
-    s_data_wr <= '0';
-    wait until (rising_edge(clk) and s_o_valid = '1');
-    check_equal(s_o_data, result, "MAIN: Result are incorrect");
+    s_valid <= '1';
+    s_a     <= data_a;
+    s_b     <= data_b;
+    wait until (rising_edge(clk) and s_ready = '1');
+    s_valid <= '0';
+  end procedure push_data;
+
+  procedure check_result(
+    signal s_ready : out std_logic;
+    signal s_valid : in std_logic;
+    signal s_data  : in std_logic_vector(WIDTH - 1 downto 0);
+    result         : std_logic_vector(WIDTH - 1 downto 0)
+  ) is
+  begin
+    s_ready <= '1';
+    wait until (rising_edge(clk) and s_valid = '1');
+    s_ready <= '0';
+    check_equal(s_data, result, "MAIN: Result are incorrect");
   end procedure check_result;
 
 begin
-  fp_add_inst : fp_add
-  generic map(
-    MOD_P => MOD_P
-  )
-  port map(
-    clk       => clk,
-    rst_n     => rst_n,
-    i_data_a  => s_i_data_a,
-    i_data_b  => s_i_data_b,
-    i_data_wr => s_i_data_wr,
-    o_data    => s_o_data,
-    o_valid   => s_o_valid
-  );
+  fp_add_inst : entity ecdsa.fp_add
+    generic map(
+      MOD_P => MOD_P
+    )
+    port map(
+      clk   => clk,
+      rst_n => rst_n,
+
+      o_i_ready => s_o_i_ready,
+      i_i_valid => s_i_i_valid,
+      i_i_a     => s_i_i_a,
+      i_i_b     => s_i_i_b,
+
+      i_o_ready => s_i_o_ready,
+      o_o_valid => s_o_o_valid,
+      o_o_data  => s_o_o_data
+    );
 
   process_clk : process
   begin
@@ -102,10 +103,10 @@ begin
     test_runner_setup(runner, runner_cfg);
     while test_suite loop
       if run("TEST_ADD")
-        -- or run("WRONG_CRC_02")
+        -- or run("")
         then
         start_stimuli <= true;
-        wait until(main_done = true);
+        wait until(push_done = true and check_done = true);
       end if;
     end loop;
 
@@ -113,20 +114,34 @@ begin
     test_runner_cleanup(runner);
   end process test_runner;
 
-  process_main : process
-    variable result : std_logic_vector (WIDTH - 1 downto 0);
+  process_push : process
   begin
     wait until (start_stimuli and rising_edge(clk) and rst_n = '1');
+    info("PROCESS_PUSH: " & running_test_case);
 
     if running_test_case = "TEST_ADD" then
-      info("PROCESS_MAIN: TEST_ADD");
-      check_result(s_i_data_a, s_i_data_b, s_i_data_wr, x"000000000000000000000000000000000000000000000001", x"000000000000000000000000000000000000000000000002", x"000000000000000000000000000000000000000000000003");
-      check_result(s_i_data_a, s_i_data_b, s_i_data_wr, x"fffffffffffffffffffffffffffffffefffffffffffffffe", x"000000000000000000000000000000000000000000000002", x"000000000000000000000000000000000000000000000001");
-      check_result(s_i_data_a, s_i_data_b, s_i_data_wr, x"fffffffffffffffffffffffffffffffefffffffffffffffe", x"fffffffffffffffffffffffffffffffefffffffffffffffe", x"fffffffffffffffffffffffffffffffefffffffffffffffd");
-      info("PROCESS_MAIN: TEST_ADD DONE");
+      push_data(s_o_i_ready, s_i_i_valid, s_i_i_a, s_i_i_b, x"000000000000000000000000000000000000000000000001", x"000000000000000000000000000000000000000000000002");
+      push_data(s_o_i_ready, s_i_i_valid, s_i_i_a, s_i_i_b, x"fffffffffffffffffffffffffffffffefffffffffffffffe", x"000000000000000000000000000000000000000000000002");
+      push_data(s_o_i_ready, s_i_i_valid, s_i_i_a, s_i_i_b, x"fffffffffffffffffffffffffffffffefffffffffffffffe", x"fffffffffffffffffffffffffffffffefffffffffffffffe");
     end if;
-    main_done <= true;
+    info("PROCESS_PUSH: " & running_test_case & " DONE");
+    push_done <= true;
     wait;
-  end process;
+  end process process_push;
+
+  process_check : process
+  begin
+    wait until (start_stimuli and rising_edge(clk) and rst_n = '1');
+    info("PROCESS_CHECK: " & running_test_case);
+
+    if running_test_case = "TEST_ADD" then
+      check_result(s_i_o_ready, s_o_o_valid, s_o_o_data, x"000000000000000000000000000000000000000000000003");
+      check_result(s_i_o_ready, s_o_o_valid, s_o_o_data, x"000000000000000000000000000000000000000000000001");
+      check_result(s_i_o_ready, s_o_o_valid, s_o_o_data, x"fffffffffffffffffffffffffffffffefffffffffffffffd");
+    end if;
+    info("PROCESS_CHECK: " & running_test_case & " DONE");
+    check_done <= true;
+    wait;
+  end process process_check;
 
 end architecture tb;
