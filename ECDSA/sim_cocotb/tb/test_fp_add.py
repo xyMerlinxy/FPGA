@@ -1,74 +1,127 @@
+from typing import Union
+
 import cocotb
+from cocotb.triggers import RisingEdge, Timer
 from cocotb.clock import Clock
-from cocotb.triggers import FallingEdge, RisingEdge, Timer
-from asyncio import Queue
+from cocotbext.axi import AxiStreamBus, AxiStreamSource, AxiStreamSink
+from cocotb_bus.bus import Bus
+from cocotb.handle import HierarchyObject, LogicObject, LogicArrayObject, SimHandleBase
+from cocotb.queue import Queue
+import random
+
+from submodules.simple_handshake import (
+    Scoreboard,
+    HandshakeSender,
+    HandshakeReceiver,
+    check_signal_type_array,
+    reset_dut,
+)
 
 
-class FpAddTestbench:
-    def __init__(self, dut):
-        self.dut = dut
-        self.expected_results = Queue()  # FIFO queue for expected values
-        self.mod_p = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFFFFFFFFFFFF
+def start_clk(clk: SimHandleBase, period: Union[float, int]):
+    if not isinstance(clk, LogicObject):
+        raise TypeError(f"Invalid signal clk type: {type(clk)}")
+    cocotb.start_soon(Clock(clk, period, unit="ns").start())
 
-    async def driver_push(self, a: int, b: int):
-        """Push data into the module"""
-        await RisingEdge(self.dut.clk)
-        self.dut.i_data_a.value = a
-        self.dut.i_data_b.value = b
-        self.dut.i_data_wr.value = 1
 
-        # Calculate expected result and put it in the queue
-        expected = (a + b) % self.mod_p
-        self.expected_results.put_nowait(expected)
+def add_function(a, b, mod):
+    return (a + b) % mod
 
-        await RisingEdge(self.dut.clk)
-        self.dut.i_data_wr.value = 0
-        await FallingEdge(self.dut.clk)
 
-        # while self.dut.o_valid.value != 0:
-        #     await FallingEdge(self.dut.clk)
-        while self.dut.o_valid.value != 1:
-            await FallingEdge(self.dut.clk)
-
-    async def monitor(self):
-        while True:
-            await FallingEdge(self.dut.clk)
-
-            if self.dut.o_valid.value == 1:
-                actual = int(self.dut.o_data.value)
-                expected = await self.expected_results.get()
-
-                assert actual == expected
-                self.dut._log.info("Checked")
-                await FallingEdge(self.dut.clk)
-                await FallingEdge(self.dut.clk)
-
-                if self.expected_results.empty():
-                    break
+# --- TESTS ---
 
 
 @cocotb.test()
-async def test_pipelined_addition(dut):
-    """Send values asynchronously and check them as they arrive"""
+async def test_simple_addition(dut: HierarchyObject):
+    mod_p = int(str(check_signal_type_array(dut.MOD_P).value), 2)
 
-    clock = Clock(dut.clk, 10, unit="ns")
-    cocotb.start_soon(clock.start())
+    start_clk(dut.clk, 10)
 
-    tb = FpAddTestbench(dut)
+    sender = HandshakeSender(
+        clk=dut.clk,
+        valid=dut.i_i_valid,
+        ready=dut.o_i_ready,
+        data_a=dut.i_i_a,
+        data_b=dut.i_i_b,
+    )
+    receiver = HandshakeReceiver(
+        clk=dut.clk,
+        valid=dut.o_o_valid,
+        ready=dut.i_o_ready,
+        data=dut.o_o_data,
+    )
+    scoreboard = Scoreboard()
 
     # Reset
-    dut.rst_n.value = 0
-    await Timer(20, "ns")
-    dut.rst_n.value = 1
-    await FallingEdge(dut.clk)
+    await reset_dut(dut.clk, dut.rst_n, 20)
 
-    monitor_task = cocotb.start_soon(tb.monitor())
+    test_data = [
+        (10, 20),
+        (1, mod_p - 1),
+        (mod_p - 1, 55),
+        (mod_p - 1, mod_p - 1),
+        (0, 0),
+    ]
 
-    await tb.driver_push(0, 0)
-    await tb.driver_push(1, 0)
-    await tb.driver_push(1, 1)
-    await tb.driver_push(tb.mod_p - 1, 1)
-    await tb.driver_push(tb.mod_p - 1, tb.mod_p - 1)
-    dut._log.info("All data pushed")
+    expected = Queue()
+    for a, b in test_data:
+        await sender.push_data(data_a=a, data_b=b)
+        await expected.put({"data": add_function(a, b, mod_p)})
 
-    await monitor_task
+    cocotb.start_soon(sender.start())
+    cocotb.start_soon(receiver.start())
+
+    scoreboard_task = cocotb.start_soon(
+        scoreboard.check(expected_queue=expected, actual_queue=receiver.data_queue)
+    )
+    await scoreboard_task
+
+
+@cocotb.test()
+async def test_random_data(dut):
+
+    _random = random.Random(42)
+
+    mod_p = int(str(check_signal_type_array(dut.MOD_P).value), 2)
+
+    start_clk(dut.clk, 10)
+
+    sender = HandshakeSender(
+        clk=dut.clk,
+        valid=dut.i_i_valid,
+        ready=dut.o_i_ready,
+        valid_prob=0.3,
+        randomize_idle=True,
+        data_a=dut.i_i_a,
+        data_b=dut.i_i_b,
+    )
+    receiver = HandshakeReceiver(
+        clk=dut.clk,
+        valid=dut.o_o_valid,
+        ready=dut.i_o_ready,
+        ready_prob=0.2,
+        data=dut.o_o_data,
+    )
+    scoreboard = Scoreboard()
+
+    # Reset
+    await reset_dut(dut.clk, dut.rst_n, 20)
+
+    test_data = []
+    for _ in range(100):
+        a = _random.randint(0, mod_p - 1)
+        b = _random.randint(0, mod_p - 1)
+        test_data.append([a, b])
+
+    expected = Queue()
+    for a, b in test_data:
+        await sender.push_data(data_a=a, data_b=b)
+        await expected.put({"data": add_function(a, b, mod_p)})
+
+    cocotb.start_soon(sender.start())
+    cocotb.start_soon(receiver.start())
+
+    scoreboard_task = cocotb.start_soon(
+        scoreboard.check(expected_queue=expected, actual_queue=receiver.data_queue)
+    )
+    await scoreboard_task
