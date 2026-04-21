@@ -18,6 +18,7 @@ rtl_files = [str(f) for f in RTL_DIR.iterdir() if f.suffix in [".v", ".sv", ".vh
 
 TOP_LEVEL_MAP = {
     "test_fp_add": "fp_add",
+    "test_fp_as": "fp_as",
 }
 
 
