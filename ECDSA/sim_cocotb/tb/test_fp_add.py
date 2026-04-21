@@ -15,19 +15,13 @@ from submodules.simple_handshake import (
 )
 
 
-def add_function(a, b, mod):
+def _tested_function(a, b, mod):
     return (a + b) % mod
 
 
-# --- TESTS ---
-
-
-@cocotb.test()
-async def test_simple_addition(dut: HierarchyObject):
-    mod_p = int(str(check_signal_type_array(dut.MOD_P).value), 2)
-
-    start_clk(dut.clk, 10)
-
+def init_interfaces(
+    dut: HierarchyObject,
+) -> Tuple[HandshakeSender, HandshakeReceiver, Scoreboard]:
     sender = HandshakeSender(
         clk=dut.clk,
         valid=dut.i_i_valid,
@@ -43,6 +37,20 @@ async def test_simple_addition(dut: HierarchyObject):
     )
     scoreboard = Scoreboard()
 
+    return sender, receiver, scoreboard
+
+
+# --- TESTS ---
+
+
+@cocotb.test()
+async def test_simple_addition(dut: HierarchyObject):
+    mod_p = int(str(check_signal_type_array(dut.MOD_P).value), 2)
+
+    start_clk(dut.clk, 10)
+
+    sender, receiver, scoreboard = init_interfaces(dut)
+
     # Reset
     await reset_dut(dut.clk, dut.rst_n, 20)
 
@@ -57,7 +65,7 @@ async def test_simple_addition(dut: HierarchyObject):
     expected = Queue()
     for a, b in test_data:
         await sender.push_data(data_a=a, data_b=b)
-        await expected.put({"data": add_function(a, b, mod_p)})
+        await expected.put({"data": _tested_function(a, b, mod_p)})
 
     cocotb.start_soon(sender.start())
     cocotb.start_soon(receiver.start())
@@ -77,23 +85,7 @@ async def test_random_data(dut):
 
     start_clk(dut.clk, 10)
 
-    sender = HandshakeSender(
-        clk=dut.clk,
-        valid=dut.i_i_valid,
-        ready=dut.o_i_ready,
-        valid_prob=0.3,
-        randomize_idle=True,
-        data_a=dut.i_i_a,
-        data_b=dut.i_i_b,
-    )
-    receiver = HandshakeReceiver(
-        clk=dut.clk,
-        valid=dut.o_o_valid,
-        ready=dut.i_o_ready,
-        ready_prob=0.2,
-        data=dut.o_o_data,
-    )
-    scoreboard = Scoreboard()
+    sender, receiver, scoreboard = init_interfaces(dut)
 
     # Reset
     await reset_dut(dut.clk, dut.rst_n, 20)
@@ -107,7 +99,7 @@ async def test_random_data(dut):
     expected = Queue()
     for a, b in test_data:
         await sender.push_data(data_a=a, data_b=b)
-        await expected.put({"data": add_function(a, b, mod_p)})
+        await expected.put({"data": _tested_function(a, b, mod_p)})
 
     cocotb.start_soon(sender.start())
     cocotb.start_soon(receiver.start())
