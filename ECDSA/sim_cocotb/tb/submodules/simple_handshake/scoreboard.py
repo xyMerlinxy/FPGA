@@ -22,6 +22,7 @@ class Scoreboard:
         self,
         expected_queue: Queue[Dict[str, Any]],
         actual_queue: Queue[Dict[str, Any]],
+        timeout: int = 10000,
     ):
         """Main loop that continuously compares incoming data."""
         self.log.info(f"{self.name}: Scoreboard started")
@@ -29,7 +30,7 @@ class Scoreboard:
         while not expected_queue.empty():
             # Wait for data to be available in both queues
             expected = await expected_queue.get()
-            actual = await with_timeout(actual_queue.get(), 10000, "ns")
+            actual = await with_timeout(actual_queue.get(), timeout, "ns")
 
             assert actual.keys() == expected.keys(), (
                 f"Key mismatch Expected: {expected.keys()} Actual: {actual.keys()}"
