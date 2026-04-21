@@ -1,6 +1,8 @@
 from typing import Union
 from cocotb.handle import SimHandleBase, LogicObject, LogicArrayObject
 from cocotb.triggers import RisingEdge, Timer
+import cocotb
+from cocotb.clock import Clock
 
 
 def check_signal_type(signal: SimHandleBase) -> Union[LogicObject, LogicArrayObject]:
@@ -30,3 +32,9 @@ async def reset_dut(
     await RisingEdge(check_signal_type_logic(clk))
     _rst.value = (reset_enable + 1) % 2
     await RisingEdge(check_signal_type_logic(clk))
+
+
+def start_clk(clk: SimHandleBase, period: Union[float, int]):
+    if not isinstance(clk, LogicObject):
+        raise TypeError(f"Invalid signal clk type: {type(clk)}")
+    cocotb.start_soon(Clock(clk, period, unit="ns").start())

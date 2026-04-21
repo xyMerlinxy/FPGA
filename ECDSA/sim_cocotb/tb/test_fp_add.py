@@ -15,13 +15,8 @@ from submodules.simple_handshake import (
     HandshakeReceiver,
     check_signal_type_array,
     reset_dut,
+    start_clk,
 )
-
-
-def start_clk(clk: SimHandleBase, period: Union[float, int]):
-    if not isinstance(clk, LogicObject):
-        raise TypeError(f"Invalid signal clk type: {type(clk)}")
-    cocotb.start_soon(Clock(clk, period, unit="ns").start())
 
 
 def add_function(a, b, mod):

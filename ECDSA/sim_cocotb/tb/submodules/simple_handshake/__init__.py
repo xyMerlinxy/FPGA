@@ -6,6 +6,7 @@ from .common import (
     check_signal_type_logic,
     check_signal_type_array,
     reset_dut,
+    start_clk,
 )
 
 __all__ = [
@@ -16,4 +17,5 @@ __all__ = [
     "check_signal_type_logic",
     "check_signal_type_array",
     "reset_dut",
+    "start_clk",
 ]
