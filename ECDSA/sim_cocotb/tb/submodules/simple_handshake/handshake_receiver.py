@@ -1,9 +1,10 @@
 import logging
+import random
 from typing import Any, Dict, Optional, Union
+
 import cocotb
 from cocotb.handle import SimHandleBase, LogicObject, LogicArrayObject
 from cocotb.triggers import RisingEdge, ReadOnly
-import random
 from cocotb.queue import Queue
 
 from .common import check_signal_type, check_signal_type_logic

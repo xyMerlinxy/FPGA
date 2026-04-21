@@ -1,13 +1,9 @@
-from typing import Union
+from typing import Tuple
+import random
 
 import cocotb
-from cocotb.triggers import RisingEdge, Timer
-from cocotb.clock import Clock
-from cocotbext.axi import AxiStreamBus, AxiStreamSource, AxiStreamSink
-from cocotb_bus.bus import Bus
-from cocotb.handle import HierarchyObject, LogicObject, LogicArrayObject, SimHandleBase
+from cocotb.handle import HierarchyObject
 from cocotb.queue import Queue
-import random
 
 from submodules.simple_handshake import (
     Scoreboard,

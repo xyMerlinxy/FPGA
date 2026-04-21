@@ -1,7 +1,8 @@
 from cocotb.triggers import with_timeout
 from typing import Any, Dict
-import logging
 from cocotb.queue import Queue
+
+import logging
 
 
 class Scoreboard:
